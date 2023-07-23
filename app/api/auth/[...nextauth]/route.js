@@ -5,6 +5,7 @@ import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 
 export const authOptions = {
+    site: 'https://highseasmarket.com',
     providers: [
         CredentialsProvider({
             name: 'Credentials',
@@ -42,6 +43,7 @@ export const authOptions = {
             },
         })
     ],
+    secret: process.env.NEXTAUTH_SECRET,
     callbacks: {
         async jwt({ token, user }) {
             return { ...token, ...user };
