@@ -45,7 +45,7 @@ const ListingRequests = () => {
         </Table.Head>
         <Table.Body loading={listingRequestsLoading} error={listingRequestsError}>
           {
-            listingRequests && listingRequests.map(item => {
+            listingRequests && listingRequests?.length > 0 ? listingRequests.map(item => {
               return <tr key={generateUniqueId(item.id)}>
                 <td><InputCheckbox /></td>
                 <td>{item.id}</td>
@@ -61,7 +61,7 @@ const ListingRequests = () => {
                   </Dropdown>
                 </td>
               </tr>
-            })
+            }) : null
           }
         </Table.Body>
       </Table>
