@@ -1,6 +1,7 @@
 import { getToken } from "next-auth/jwt";
 import { withAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
+
 export default withAuth(
     function middleware(req) {
         if (
@@ -9,7 +10,6 @@ export default withAuth(
         ) {
             return new NextResponse("You are not authorized to access this module!");
         }
-
     }, {
     callbacks: {
         authorized: ({ token }) => !!token

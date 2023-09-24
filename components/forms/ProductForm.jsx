@@ -19,6 +19,8 @@ import Link from "next/link"
 import fieldChange from "@utils/fieldChange"
 import Modal from "@components/Modal"
 import DeleteProduct from "@components/modals/DeleteProduct"
+import uploadFile from "@utils/uploadFile"
+import Loader from "@components/Loader"
 
 const ProductForm = ({ productData, isEdit = false, className = "", toggleModal, reloadProducts, refetch }) => {
     const { data: session } = useSession();
@@ -29,6 +31,7 @@ const ProductForm = ({ productData, isEdit = false, className = "", toggleModal,
         slug: '',
         category_id: '',
         product_images: [],
+        uploaded_images: [],
         is_custom_unit: false,
         unit_id: '',
         custom_unit: '',
@@ -36,7 +39,6 @@ const ProductForm = ({ productData, isEdit = false, className = "", toggleModal,
         product_price: 0,
         is_publish: false,
         created_by: '',
-        uploaded_images: [],
     });
 
     const [processing, setProcessing] = useState(false);
@@ -48,12 +50,27 @@ const ProductForm = ({ productData, isEdit = false, className = "", toggleModal,
 
     useEffect(() => {
         if (isEdit) {
-            setProduct({ ...productData });
+            setProduct({ ...productData, uploaded_images: [] });
         };
     }, [])
 
     const onHandleChange = (e) => {
         fieldChange(e, product, setProduct);
+    }
+
+    const onHandleImageUpload = async (e) => {
+        setProcessing(true);
+        const imageUrl = await uploadFile(e);
+        const data = product;
+        data.product_images.push({
+            image_url: imageUrl,
+        });
+        data.uploaded_images.push({
+            image_url: imageUrl,
+        });
+        setProduct({ ...data });
+        e.target.value = null;
+        setProcessing(false);
     }
 
     const onHandleProductNameBlur = (e) => {
@@ -77,7 +94,7 @@ const ProductForm = ({ productData, isEdit = false, className = "", toggleModal,
     const onHandleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!isEdit && product.uploaded_images.length == 0) {
+        if (!isEdit && product.product_images.length == 0) {
             setMessage({
                 type: 'error',
                 content: 'Upload at least 1 image.',
@@ -89,63 +106,30 @@ const ProductForm = ({ productData, isEdit = false, className = "", toggleModal,
 
         try {
             let url = (!isEdit ? '/api/dashboard/products' : '/api/dashboard/products/' + product.id);
-
-            let data = {
-                ...product,
-            }
-
+            let data = { ...product };
             data.created_by_user_id = session?.user?.id;
-
-            var formData = new FormData();
-
-            if (isEdit) {
-                formData.append('id', data.id);
-            }
-
-            formData.append('product_name', data.product_name);
-            formData.append('product_description', data.product_description);
-            formData.append('slug', data.slug);
-            formData.append('category_id', data.category_id);
-            formData.append('is_custom_unit', data.is_custom_unit ? 1 : 0);
-            formData.append('unit_id', data.unit_id);
-            formData.append('custom_unit', data.custom_unit);
-            formData.append('stock', data.stock);
-            formData.append('product_price', data.product_price);
-            formData.append('is_publish', data.is_publish ? 1 : 0);
-            formData.append('created_by_user_id', data.created_by_user_id);
-            formData.append('uploaded_images', data.uploaded_images);
 
             const response = await fetch(url, {
                 method: 'post',
-                body: formData,
+                body: JSON.stringify(data),
             });
 
             if (!response.ok) {
                 throw new Error('Something went wrong. Please try again later.');
             }
 
-            if (isEdit) {
-                SweetAlert({
-                    title: "Success!",
-                    text: "Product has been updated.",
-                    icon: "success",
-                    confirmButtonText: "Ok",
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        refetch();
-                    }
-                });
-
-                return false;
-            }
-
             SweetAlert({
                 title: "Success!",
-                text: "Product has been added.",
+                text: (isEdit ? "Product has been updated." : "Product has been added."),
                 icon: "success",
-                confirmButtonText: "Continue",
+                confirmButtonText: (isEdit ? "Ok" : "Continue"),
             }).then((result) => {
                 if (result.isConfirmed) {
+                    if (isEdit) {
+                        refetch();
+                        return false;
+                    }
+
                     if (toggleModal) {
                         toggleModal(prev => !prev);
                     };
@@ -193,10 +177,8 @@ const ProductForm = ({ productData, isEdit = false, className = "", toggleModal,
                 </div>
                 <div className="mb-4">
                     <InputLabel forInput="product_images" required>Images</InputLabel>
-                    {
-                        product.product_images?.length > 0 && <ProductImageGrid images={product.product_images} />
-                    }
-                    <InputFileUpload name="uploaded_images" multiple={true} handleChange={onHandleChange} />
+                    <ProductImageGrid images={product.product_images} uploadProcessing={processing} />
+                    <InputFileUpload name="image_upload" processing={processing} handleChange={onHandleImageUpload} />
                 </div>
                 <div className="mb-4">
                     <Switch name="is_custom_unit" value={product.is_custom_unit} text="Custom unit?" processing={processing} handleChange={onHandleChange} />

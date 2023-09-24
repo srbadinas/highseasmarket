@@ -35,5 +35,7 @@ export default ({
         showCancelButton: showCancelButton,
         confirmButtonText: confirmButtonText,
         reverseButtons: reverseButtons,
+        allowOutsideClick: false,
+        allowEscapeKey: false,
     });
 };

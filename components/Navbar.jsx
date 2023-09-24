@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import ApplicationLogo from "./ApplicationLogo";
@@ -10,6 +10,8 @@ import InputText from "./InputText";
 import { useRouter, useSearchParams } from "next/navigation";
 
 const Navbar = () => {
+  const menuRef = useRef(null);
+
   const [showMenu, setShowMenu] = useState(false);
   const { data: session } = useSession();
   const [searchText, setSearchText] = useState();
@@ -24,13 +26,27 @@ const Navbar = () => {
 
   }, [searchParams]);
 
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setShowMenu(false);
+      };
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showMenu]);
+
   const onHandleSearchChange = (e) => {
     setSearchText(e.target.value);
   }
 
   const onHandleSubmit = async (e) => {
     e.preventDefault();
-    router.push(`/listings${searchText ? `?q=${searchText}` : ''}`)
+    router.push(`/listings?q=${searchText}`)
   }
 
   return (
@@ -95,20 +111,20 @@ const Navbar = () => {
             className={
               "absolute w-full h-0 top-[70px] left-[0px] px-3 invisible opacity-0 transition-all delay-0 duration-300 ease-in-out z-[9997]" +
               (showMenu ? " !visible opacity-100 h-[64px]" : "")
-            }>
+            } ref={menuRef}>
             <div className="bg-gradient-to-b from-default-2 to-default-1 rounded-b shadow">
               <ul className="text-white px-4 py-2">
                 <li>
                   <Link
                     href="/"
-                    className="block px-2 transition ease-in-out hover:bg-blue-700">
+                    className="block px-2 transition ease-in-out hover:bg-blue-700" onClick={() => setShowMenu(false)}>
                     Home
                   </Link>
                 </li>
                 <li>
                   <Link
                     href="/listings"
-                    className="block px-2 transition ease-in-out hover:bg-blue-700">
+                    className="block px-2 transition ease-in-out hover:bg-blue-700" onClick={() => setShowMenu(false)}>
                     Listings
                   </Link>
                 </li>

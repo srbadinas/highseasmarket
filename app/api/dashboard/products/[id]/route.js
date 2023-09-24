@@ -5,8 +5,7 @@ import { NextResponse } from "next/server";
 export async function GET(req, { params }) {
     try {
         const { id } = params;
-        const products = await query(`SELECT p.*, CONCAT(u.firstname, ' ' , u.lastname) as created_by_user FROM products p LEFT JOIN users u ON p.created_by_user_id = u.id WHERE p.id = ` + id);
-        const product = products[0];
+        const [product] = await query(`SELECT p.*, CONCAT(u.firstname, ' ' , u.lastname) as created_by_user FROM products p LEFT JOIN users u ON p.created_by_user_id = u.id WHERE p.id = ` + id);
 
         if (!product) {
             throw new Error("Product not found");
@@ -25,23 +24,19 @@ export async function GET(req, { params }) {
 
 export async function POST(req) {
     try {
-        const requestData = await req.formData();
-        const productData = {};
-
-        [...requestData].map(([name, value]) => {
-            productData[name] = value;
-        });
-
-        const { created_at, id, uploaded_images, ...product} = productData;
+        const productData = await req.json();
+        const { id, product_images, uploaded_images, created_at, created_by, created_by_user, ...product } = productData;
 
         product.updated_at = getUTCDateTime();
         product.product_price = product.product_price.replace(/[^\d.]/g, "");
 
         const res = await query('UPDATE products SET ? WHERE id = ?', [product, id]);
+        await query('UPDATE product_images SET is_active = 0 WHERE product_id = ?', [id]);
 
-        // [...uploaded_images].map(async item => {
-        //     // const productImageResponse = await query(`INSERT INTO product_images (product_id, image_url, is_active) VALUES (?, ?)`, [productId, item.image_url, 1]);
-        // });
+        [...uploaded_images].map(async (item, i) => {
+            const isActive = (i == 0 ? 1 : 0);
+            const productImageResponse = await query(`INSERT INTO product_images (product_id, image_url, is_active) VALUES (?, ?, ?)`, [id, item.image_url, isActive]);
+        });
 
         return NextResponse.json(res);
     } catch (err) {

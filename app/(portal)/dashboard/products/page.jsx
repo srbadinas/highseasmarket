@@ -63,9 +63,8 @@ const Products = () => {
                                     <td><LabelDateTime datetime={item.updated_at} /></td>
                                     <td>
                                         <Dropdown toggleContent="..." hasIcon={false}>
-                                            <Dropdown.Item href={"/dashboard/products/" + item.id} icon="fa-edit" text="Edit" />
+                                            <Dropdown.Item href={"/dashboard/products/" + item.id} icon="fa-edit" text="Details" />
                                             <Dropdown.Item icon="fa-trash-alt" text="Delete" handleClick={(e) => onHandleToggleDeleteModal(e, item.id)} />
-
                                         </Dropdown>
                                     </td>
                                 </tr>

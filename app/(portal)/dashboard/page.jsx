@@ -5,7 +5,6 @@ import DashboardCount from "@components/dashboard/DashboardCount";
 import PageHeader from "@components/dashboard/PageHeader";
 import useFetch from "@hooks/useFetch";
 import { useSession } from "next-auth/react";
-import { useEffect } from "react";
 
 const Dashboard = () => {
     const { data: session, status } = useSession();

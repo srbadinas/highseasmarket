@@ -10,50 +10,78 @@ import CustomImage from "@components/CustomImage";
 import useFetch from "@hooks/useFetch";
 import Link from "next/link";
 import Loader from "@components/Loader";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import InputSelect from "@components/InputSelect";
+import Alert from "@components/Alert";
 
 const Listings = () => {
-    const router = useRouter();
     const searchParams = useSearchParams();
 
-    const [url, setUrl] = useState(null);
-    const [sortDirection, setSortDirection] = useState();
-
-    const { data: listings, loading: listingsLoading, error: listingsError } = useFetch(url);
-
-    useEffect(() => {
-        
-    }, []);
+    const { data: categories, loading: categoriesLoading, error: categoriesError } = useFetch("/api/public/categories");
+    const [selectedCategory, setSelectedCategory] = useState('');
+    const [sortField, setSortField] = useState('created_at');
+    const [sortDirection, setSortDirection] = useState('desc');
+    const [listings, setListings] = useState([]);
+    const [processing, setProcessing] = useState(false);
 
     useEffect(() => {
-        let searchText = searchParams.get('q') ? searchParams.get('q') : '';
-        let sortBy = searchParams.get('sort') ? searchParams.get('sort') : 'created_at';
-        let sortDirection = searchParams.get('sort_direction') ? searchParams.get('sort_direction') : 'desc';
-        setSortDirection(sortDirection);
+        onHandleFilterChange();
+    }, [searchParams, selectedCategory, sortDirection]);
 
-        setUrl(`/api/public/listings?q=${searchText}&is_publish=1&sort=${sortBy}&sort_direction=${sortDirection}&limit=15`, { cache: 'no-store' });
-    }, [searchParams]);
+    const onHandleFilterChange = () => {
+        setProcessing(true);
+        fetch('/api/public/listings', {
+            method: 'post',
+            body: JSON.stringify({
+                keywords: searchParams.get('q'),
+                category: selectedCategory,
+                sortField: sortField,
+                sortDirection: sortDirection,
+                limit: 15,
+            })
+        }).then(res => {
+            if (!res.ok) {
+                throw new Error(res.statusText);
+            };
 
-    const onHandleSort = () => {
-        let searchText = searchParams.get('q') ? searchParams.get('q') : '';
-        let sortDirection = !searchParams.get('sort_direction') ? 'desc' : searchParams.get('sort_direction') == 'asc' ? 'desc' : 'asc';
-
-        router.push('/listings?q=' + searchText + '&sort_direction=' + sortDirection)
+            return res.json();
+        }).then(data => {
+            setListings(data);
+        }).catch(err => {
+            console.log(err)
+        }).finally(() => {
+            setProcessing(false);
+        });
     }
 
     return (
         <Container className="!p-4">
             <SectionHeader text="Listings" />
+            <div className="flex items-center mb-6">
+                {
+                    categoriesLoading ? <Loader className="!mx-0" /> : <>
+                        <span className="block text-base mr-4">Category:</span>
+                        {
+                            categories && <InputSelect value={selectedCategory} className="!w-auto" defaultOptionText="All" handleChange={(e) => setSelectedCategory(e.target.value)}>
+                                {
+                                    categories.map(item => {
+                                        return <option key={generateUniqueId(item.id)} value={item.slug}>{item.category}</option>
+                                    })
+                                }
+                            </InputSelect>
+                        }
+                    </>
+                }
+            </div>
             <div className="flex justify-between mb-6">
-                <Button type="button" onClick={() => onHandleSort()}>
-                    <i className={`fas fa-sort-amount-${sortDirection == 'asc' ? "down-alt" : "up"} mr-2`} aria-hidden="true"></i> Sorted by Date
+                <Button type="button" onClick={() => setSortDirection(prev => prev == 'desc' ? 'asc' : 'desc')}>
+                    <i className={`fas fa-sort-amount-${sortDirection == 'asc' ? "up-alt" : "down-alt"} mr-2`} aria-hidden="true"></i> Sorted by Date
                 </Button>
-
                 <Link href="/listings/listingrequest" className="btn btn-default">Listing Request</Link>
             </div>
             <div className="mb-6 sm:flex sm:flex-wrap">
                 {
-                    listingsLoading ? <Loader className="!w-[80px]" /> : listings && listings.map(item => {
+                    processing ? <Loader /> : listings ? listings.map(item => {
                         return <div key={generateUniqueId(item.id)} className="w-full p-0 mb-6 sm:p-2 lg:p-0  sm:w-[50%] lg:w-full">
                             <div className="rounded border border-gray-200 transition duration-300 hover:overflow-hidden hover:scale-105">
                                 <Link href={"/listings/" + item.slug} className="w-full h-full flex flex-col justify-between min-h-[190px] lg:flex-row hover:brightness-100">
@@ -83,7 +111,7 @@ const Listings = () => {
                                 </Link>
                             </div>
                         </div>
-                    })
+                    }) : <Alert type="info" message="No records found." />
                 }
             </div>
         </Container>

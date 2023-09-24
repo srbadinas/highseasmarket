@@ -13,6 +13,7 @@
     "@heroicons/react": "^2.0.18",
     "autoprefixer": "10.4.14",
     "bcryptjs": "^2.4.3",
+    "formidable": "^1.2.2",
     "jsonwebtoken": "^9.0.1",
     "moment": "^2.29.4",
     "mysql2": "^3.3.5",

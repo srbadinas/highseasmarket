@@ -20,7 +20,7 @@ const useFetch = (url, options) => {
             setLoading(true);
             const res = await fetch(url, {
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
                 },
                 method: 'GET',
                 next: {

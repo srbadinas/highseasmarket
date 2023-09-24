@@ -13,24 +13,18 @@ export async function GET(req) {
 
 export async function POST(req) {
     try {
-        const requestData = await req.formData();
-
-        const productData = {};
-
-        [...requestData].map(([name, value]) => {
-            productData[name] = value;
-        });
-
-        const { uploaded_images, ...product } = productData;
+        const productData = await req.json();
+        const { product_images, uploaded_images, created_by, ...product } = productData;
 
         product.product_price = product.product_price.replace(/[^\d.]/g, "");
 
         const res = await query(`INSERT INTO products SET ?`, product);
         let productId = res.insertId;
 
-        // [...uploaded_images].map(async item => {
-        //     // const productImageResponse = await query(`INSERT INTO product_images (product_id, image_url, is_active) VALUES (?, ?)`, [productId, item.image_url, 1]);
-        // });
+        [...uploaded_images].map(async (item, i) => {
+            const isActive = (i == 0 ? 1 : 0);
+            const productImageResponse = await query(`INSERT INTO product_images (product_id, image_url, is_active) VALUES (?, ?, ?)`, [productId, item.image_url, isActive]);
+        });
 
         return NextResponse.json(res);
     }
