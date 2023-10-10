@@ -25,6 +25,10 @@ input[type="checkbox"] {
 
 /* ------------------------------ Link ------------------------------ */
 
+a.default-link {
+    color: rgb(21 32 166 / 1);
+}
+
 a:hover {
     filter: brightness(1.5);
     transition-property: all;

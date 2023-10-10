@@ -10,7 +10,7 @@ const DashboardCount = ({
 }) => {
     return (
         <div className={"w-full sm:w-[49%] lg:w-[24%] " + className}>
-            <div className="w-full h-[120px] flex items-center rounded bg-white shadow px-4">
+            <div className="w-full h-[120px] flex items-center rounded bg-white shadow border border-gray-300 px-4">
                 <Link href={href} className="w-full h-full flex items-center hover:!brightness-100">
                     <div
                         className={

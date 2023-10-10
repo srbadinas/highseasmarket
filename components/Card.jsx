@@ -4,4 +4,12 @@ const Card = ({ className = "", children }) => {
     )
 }
 
+const Title = ({ children }) => {
+    return <div className="w-full flex justify-start text-xl font-semibold text-gray-700 mb-5">
+        {children}
+    </div>
+}
+
+Card.Title = Title;
+
 export default Card
