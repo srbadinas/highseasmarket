@@ -1,0 +1,246 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap");
+
+:root {
+  --dashboard-sidebar-bg-color: rgb(23 23 23 / 1);
+}
+
+body {
+  font-size: 0.875rem;
+  font-family: "Lato", sans-serif;
+}
+
+/* ------------------------------ Fields ------------------------------ */
+
+input[type="checkbox"] {
+  cursor: pointer;
+}
+
+/* ------------------------------ Link ------------------------------ */
+
+a.default-link {
+  color: rgb(21 32 166 / 1);
+}
+
+a:hover {
+  filter: brightness(1.5);
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+/* ------------------------------ Button ------------------------------ */
+
+.btn {
+  display: flex;
+  grid-gap: .5rem;
+  justify-content: center;
+  align-items: center;
+  border-radius: 0.25rem;
+  padding: 0.25rem 1rem;
+  transition-property: color, background-color, border-color,
+    text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter,
+    backdrop-filter, -webkit-backdrop-filter;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+  border: 1px solid;
+  box-shadow: 0 0 #0000, 0 0 #0000, 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
+.btn-default {
+  color: #fff;
+  background-color: rgb(21 32 166 / 1);
+  border-color: rgb(21 32 166 / 1);
+}
+
+.btn-default:hover {
+  filter: brightness(1.5);
+}
+
+.btn-outline-default {
+  color: rgb(21 32 166 / 1);
+  background-color: transparent;
+  border-color: rgb(21 32 166 / 1);
+}
+
+.btn-outline-default:hover {
+  color: #fff;
+  background-color: rgb(21 32 166 / 1);
+}
+
+.btn-success {
+  color: #fff;
+  background-color: #198754;
+  border-color: #198754;
+}
+
+.btn-success:hover {
+  color: #fff;
+  background-color: #157347;
+  border-color: #146c43;
+}
+
+.btn-success:focus {
+  background-color: #157347;
+  border-color: #146c43;
+  box-shadow: 0 0 0 0.25rem rgba(60, 153, 110, 0.5);
+}
+
+.btn-danger {
+  color: #fff;
+  background-color: #dc3545;
+  border-color: #dc3545;
+}
+
+.btn-danger:hover,
+.btn-danger:focus {
+  color: #fff;
+  background-color: #bb2d3b;
+  border-color: #b02a37;
+}
+
+.btn-danger:focus {
+  box-shadow: 0 0 0 0.25rem rgba(225, 83, 97, 0.5);
+}
+
+.btn-transparent {
+  color: rgb(17 24 39 / 1);
+  background-color: transparent;
+  border-color: #e5e7eb;
+}
+
+.btn-transparent:hover,
+.btn-transparent:focus {
+  filter: brightness(1);
+  background-color: rgb(249 250 251 / 1);
+}
+
+/* ------------------------------ Button Group ------------------------------ */
+
+.btn-group {
+  position: relative;
+  display: inline-flex;
+  vertical-align: middle;
+}
+
+.btn-group > .btn-group:not(:last-child) > button,
+.btn-group > button:not(:last-child):not(.dropdown-toggle),
+.btn-group > .btn-group:not(:last-child) > input,
+.btn-group > input:not(:last-child):not(.dropdown-toggle) {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.btn-group > .btn-group:not(:first-child) > button,
+.btn-group > button:nth-child(n + 3),
+.btn-group > :not(.btn-check) + button,
+.btn-group > .btn-group:not(:first-child) > input,
+.btn-group > input:nth-child(n + 3),
+.btn-group > :not(.btn-check) + input {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+/* ------------------------------ Scroll Bar ------------------------------ */
+
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+  background-color: rgba(0, 0, 0, 30%);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-track {
+  border-radius: 5px;
+  background-color: rgba(255, 255, 255, 15%);
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+  background-color: rgba(255, 255, 255, 30%);
+}
+
+/* ------------------------------ Custom Styles ------------------------------ */
+
+.dashboard-table {
+  width: 100%;
+}
+
+.dashboard-table tr {
+  border-bottom: 1px solid rgb(209 213 219 / 1);
+  transition-property: background-color;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+.dashboard-table > tbody > tr:hover {
+  background-color: rgb(229 231 235 / var(--tw-bg-opacity));
+}
+
+.dashboard-table > thead > tr > th {
+  vertical-align: middle;
+  padding: 0.25rem 0.5rem;
+  text-align: left;
+}
+
+.dashboard-table > tbody > tr > td {
+  padding: 0.5rem;
+  vertical-align: middle;
+}
+
+.dashboard-table > tbody > tr > td:not(:last-child) {
+  text-align: left;
+}
+
+.dashboard-table > tbody > tr > td:last-child {
+  text-align: right;
+}
+
+/* ------------------------------ SweetAlert ------------------------------ */
+
+.swal2-container {
+  z-index: 9999;
+}
+
+/* ------------------------------ React Tabs ------------------------------ */
+
+.react-tabs {
+  width: 100%;
+}
+
+.react-tabs .react-tabs__tab-list {
+  display: flex;
+  border-bottom: 1px solid #d1d5db;
+}
+
+.react-tabs .react-tabs__tab-list .react-tabs__tab {
+  padding: 0.25rem 0.75rem;
+  cursor: pointer;
+  margin-bottom: -1px;
+}
+
+.react-tabs .react-tabs__tab-list .react-tabs__tab.react-tabs__tab--selected {
+  border-top: 1px solid #d1d5db;
+  border-right: 1px solid #d1d5db;
+  border-left: 1px solid #d1d5db;
+  border-bottom: 1px solid #fff;
+  border-top-right-radius: 3px;
+  border-top-left-radius: 3px;
+}
+
+.react-tabs .react-tabs__tab-panel {
+  padding: 0.75rem 0.5rem;
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+.react-tabs .react-tabs__tab-panel:not(.react-tabs__tab-panel--selected) {
+  height: 0;
+  opacity: 0;
+  visibility: hidden;
+  padding: 0;
+}
